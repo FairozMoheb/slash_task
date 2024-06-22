@@ -26,7 +26,7 @@ app = dash.Dash(__name__)
 
 # Define layout
 app.layout = html.Div([
-    html.H1("Sales Dashboard"),
+    html.H1("Amazon sales report Dashboard"),
     dcc.Tabs([
         dcc.Tab(label='Sales by State', children=[
             dcc.Graph(id='state-sales-chart')
@@ -51,6 +51,9 @@ app.layout = html.Div([
         ]),
         dcc.Tab(label='Sales by Size', children=[
             dcc.Graph(id='size-sales-chart')
+        ]),
+        dcc.Tab(label='Status Distribution', children=[
+            dcc.Graph(id='status-distribution-chart')
         ])
     ])
 ])
@@ -202,6 +205,21 @@ def update_size_sales_chart(_):
                  labels={'Size': 'Size', 'Amount': 'Total Sales'},
                  color='Amount',
                  color_continuous_scale='Cividis')
+    return fig
+
+# Callback to update status distribution chart
+@app.callback(
+    Output('status-distribution-chart', 'figure'),
+    Input('status-distribution-chart', 'id')
+)
+def update_status_distribution_chart(_):
+    status_distribution = data['Status'].value_counts().reset_index()
+    status_distribution.columns = ['Status', 'Count']
+    
+    fig = px.pie(status_distribution, values='Count', names='Status',
+                 title='Order Status Distribution',
+                 labels={'Count': 'Number of Orders', 'Status': 'Order Status'},
+                 color_discrete_sequence=px.colors.sequential.RdBu)
     return fig
 
 # Run the app
