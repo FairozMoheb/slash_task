@@ -48,6 +48,9 @@ app.layout = html.Div([
         ]),
         dcc.Tab(label='Sales by Fulfillment Channel', children=[
             dcc.Graph(id='fulfillment-channel-chart')
+        ]),
+        dcc.Tab(label='Sales by Size', children=[
+            dcc.Graph(id='size-sales-chart')
         ])
     ])
 ])
@@ -184,6 +187,21 @@ def update_fulfillment_channel_chart(_):
                  labels={'Fulfilment': 'Fulfillment Channel', 'Amount': 'Total Sales'},
                  color='Amount',
                  color_continuous_scale='Purples')
+    return fig
+
+# Callback to update sales by size chart
+@app.callback(
+    Output('size-sales-chart', 'figure'),
+    Input('size-sales-chart', 'id')
+)
+def update_size_sales_chart(_):
+    sales_by_size = data.groupby('Size')['Amount'].sum().reset_index()
+    
+    fig = px.bar(sales_by_size, x='Size', y='Amount',
+                 title='Sales by Size',
+                 labels={'Size': 'Size', 'Amount': 'Total Sales'},
+                 color='Amount',
+                 color_continuous_scale='Cividis')
     return fig
 
 # Run the app
