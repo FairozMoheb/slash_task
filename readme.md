@@ -1,4 +1,4 @@
-# Project Title
+# Amazon sales report
 
 This project contains notebooks for data exploration, cleaning and analysis, it also has a predictive model and an interactive dashboard for the amazon sales report in india in quarter two 2022
 
