@@ -1,5 +1,3 @@
-
-# Load the data
 # file_path = 'clean_amazon_sales_report.csv' 
 # data = pd.read_csv(file_path)
 import dash
@@ -47,6 +45,9 @@ app.layout = html.Div([
         ]),
         dcc.Tab(label='Impact of Promotions on Sales', children=[
             dcc.Graph(id='promotion-impact-chart')
+        ]),
+        dcc.Tab(label='Sales by Fulfillment Channel', children=[
+            dcc.Graph(id='fulfillment-channel-chart')
         ])
     ])
 ])
@@ -160,7 +161,6 @@ def update_top_categories_chart(_):
     Input('promotion-impact-chart', 'id')
 )
 def update_promotion_impact_chart(_):
-    # Aggregate sales with and without promotions
     promotion_impact = data.groupby('Promotion Applied')['Amount'].sum().reset_index()
     promotion_impact['Promotion'] = promotion_impact['Promotion Applied'].map({True: 'With Promotion', False: 'Without Promotion'})
     
@@ -169,6 +169,21 @@ def update_promotion_impact_chart(_):
                  labels={'Promotion': 'Promotion Status', 'Amount': 'Total Sales'},
                  color='Amount',
                  color_continuous_scale='Oranges')
+    return fig
+
+# Callback to update sales by fulfillment channel chart
+@app.callback(
+    Output('fulfillment-channel-chart', 'figure'),
+    Input('fulfillment-channel-chart', 'id')
+)
+def update_fulfillment_channel_chart(_):
+    fulfillment_sales = data.groupby('Fulfilment')['Amount'].sum().reset_index()
+    
+    fig = px.bar(fulfillment_sales, x='Fulfilment', y='Amount',
+                 title='Sales by Fulfillment Channel',
+                 labels={'Fulfilment': 'Fulfillment Channel', 'Amount': 'Total Sales'},
+                 color='Amount',
+                 color_continuous_scale='Purples')
     return fig
 
 # Run the app
